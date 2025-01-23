@@ -11,7 +11,7 @@
 #    define LEADER_TIMEOUT 300
 #endif
 
-// Leader key stuff
+// Leader key stufsu
 bool     leading              = false;
 uint16_t leader_time          = 0;
 uint16_t leader_sequence[5]   = {0, 0, 0, 0, 0};

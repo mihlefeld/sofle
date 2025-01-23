@@ -18,8 +18,10 @@
 
 #include <string.h>
 
+#include "action_layer.h"
 #include "dynamic_keymap.h"
 #include "quantum.h"
+#include "quantum_keycodes.h"
 #include "vial_generated_keyboard_definition.h"
 
 #include "vial_ensure_keycode.h"
@@ -495,6 +497,9 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         vial_tap_dance_entry_t td;
         if (dynamic_keymap_get_tap_dance(keycode & 0xFF, &td) == 0)
             return td.custom_tapping_term;
+    }
+    else if (get_highest_layer(default_layer_state) == 0 && (keycode == SFT_T(KC_C) || keycode == SFT_T(KC_H))) {
+        return qs_get_tapping_term(keycode, record) - 50;
     }
 #endif
 #ifdef QMK_SETTINGS
