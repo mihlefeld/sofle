@@ -498,10 +498,10 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         if (dynamic_keymap_get_tap_dance(keycode & 0xFF, &td) == 0)
             return td.custom_tapping_term;
     }
-    else if (get_highest_layer(default_layer_state) == 0 && (keycode == SFT_T(KC_C) || keycode == SFT_T(KC_H))) {
+#endif
+    if (get_highest_layer(default_layer_state) == 0 && (keycode == SFT_T(KC_C) || keycode == SFT_T(KC_H))) {
         return qs_get_tapping_term(keycode, record) - 50;
     }
-#endif
 #ifdef QMK_SETTINGS
     return qs_get_tapping_term(keycode, record);
 #else

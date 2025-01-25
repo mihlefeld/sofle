@@ -1,7 +1,10 @@
 // Copyright 2023 QMK
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#include <stdbool.h>
+#include <stdint.h>
+#include "keycodes.h"
+#include "transaction_id_define.h"
+#include "via.h"
 #include QMK_KEYBOARD_H
 #include "keymap_german.h"
 #include "keymap_russian.h"
@@ -9,6 +12,7 @@
 #include "process_tap_dance.h"
 #include "action_layer.h"
 #include "rgb_matrix.h"
+#include "features/achordion.h"
 
 #define _NOT 0
 #define _QWE _NOT + 1
@@ -20,6 +24,13 @@
 #define _MOS _NAV + 1
 #define _FUN _MOS + 1
 #define _SWT 15
+
+#define SW_ESC LT(_SWT,KC_ESC)
+#define SW_GRV LT(_SWT,KC_GRV)
+#define HS(x) LSFT_T(x)
+#define HC(x) LCTL_T(x)
+#define HA(x) LALT_T(x)
+#define HG(x) LGUI_T(x)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /*
@@ -38,39 +49,39 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *            `----------------------------------'           '------''---------------------------'
  */
 [_NOT] = LAYOUT_split_4x6_5(
-LT(_SWT,KC_ESC),      _______,      _______,     _______,      _______,  _______,                        _______,      _______,      _______,      _______,      _______, LT(_SWT, KC_GRV),
-        KC_CAPS,         DE_Z,         DE_Y,         KC_U,         KC_A,    KC_Q,                           KC_P,         KC_B,         KC_M,         KC_L,         KC_F,             KC_J,
-       MO(_SPE), LSFT_T(KC_C), LCTL_T(KC_S), LALT_T(KC_I), LGUI_T(KC_E),    KC_O,                           KC_D, LGUI_T(KC_T), LALT_T(KC_N), LCTL_T(KC_R), LSFT_T(KC_H),         MO(_SPE),
-        _______,         KC_V,         KC_X,      DE_UDIA,      DE_ADIA, DE_ODIA,    KC_MUTE,  KC_MPLY,     KC_W,         KC_G,      DE_COMM,       DE_DOT,         KC_K,            DE_SS,
-                      KC_MPRV,      RGB_SAD,     MO(_FUN),     MO(_NAV),  KC_SPC,                       MO(_NAV),     MO(_MOS),     MO(_FUN),      RGB_SAI,      KC_MNXT
+ SW_ESC,  _______,  _______,  _______,  _______,  _______,                    _______, _______,  _______,  _______,  _______,   SW_GRV,
+ KC_CAPS,     DE_Z,     DE_Y,     KC_U,     KC_A,    KC_Q,                       KC_P,     KC_B,     KC_M,     KC_L,     KC_F,     KC_J,
+MO(_SPE), HS(KC_C), HC(KC_S), HA(KC_I), HG(KC_E),    KC_O,                       KC_D, HG(KC_T), HA(KC_N), HC(KC_R), HS(KC_H), MO(_SPE),
+ _______,     KC_V,     KC_X,  DE_UDIA,  DE_ADIA, DE_ODIA, KC_MUTE, KC_MPLY,     KC_W,     KC_G,  DE_COMM,   DE_DOT,     KC_K,    DE_SS,
+           KC_MPRV,  RGB_SAD, MO(_FUN), MO(_NAV),  KC_SPC,                   MO(_NAV), MO(_MOS), MO(_FUN),  RGB_SAI,  KC_MNXT
 ),
 [_QWE] = LAYOUT_split_4x6_5(
-    _______,      _______,      _______,      _______,      _______, _______,                         _______,      _______,      _______,      _______,         _______,    _______,
-     KC_TAB,         KC_Q,         KC_W,         KC_E,         KC_R,    KC_T,                            KC_Y,         KC_U,         KC_I,         KC_O,            KC_P,    KC_BSPC,
-      MO(_SPE), LSFT_T(KC_A), LCTL_T(KC_S), LALT_T(KC_D), LGUI_T(KC_F),    KC_G,                         KC_H, LGUI_T(KC_J), LALT_T(KC_K), LCTL_T(KC_L), LSFT_T(DE_ODIA),      MO(_SPE),
-    KC_LSFT,         KC_Z,         KC_X,         KC_C,         KC_V,    KC_B,    _______,   _______,     KC_N,         KC_M,      DE_COMM,       DE_DOT,         DE_MINS,    KC_RSFT,
-                  _______,      _______,      _______,      _______, _______,                         _______,      _______,      _______,      _______,         _______
+ _______,  _______,  _______,  _______,  _______, _______,                   _______,  _______,  _______,  _______,     _______,  _______,
+  KC_TAB,     KC_Q,     KC_W,     KC_E,     KC_R,    KC_T,                      KC_Y,     KC_U,     KC_I,     KC_O,        KC_P,  KC_BSPC,
+MO(_SPE), HS(KC_A), HC(KC_S), HA(KC_D), HG(KC_F),    KC_G,                      KC_H, HG(KC_J), HA(KC_K), HC(KC_L), HS(DE_ODIA), MO(_SPE),
+ KC_LSFT,     KC_Z,     KC_X,     KC_C,     KC_V,    KC_B, _______, _______,    KC_N,     KC_M,  DE_COMM,   DE_DOT,     DE_MINS,  KC_RSFT,
+           _______,  _______,  _______,  _______, _______,                   _______,  _______,  _______,  _______,     _______
 ),
 [_RUS] = LAYOUT_split_4x6_5(
-    _______,      _______,          _______,       _______,      _______, _______,                        _______,      _______,       _______,       _______,    _______,          _______,
-      RU_YO,      RU_SHTI,           RU_TSE,          RU_U,        RU_KA,   RU_IE,                          RU_EN,       RU_GHE,        RU_SHA,       RU_SHCH,      RU_ZE,            RU_HA,
-   MO(_SPE), LSFT_T(RU_EF), LCTL_T(RU_YERU), LALT_T(RU_VE), LGUI_T(RU_A),   RU_PE,                          RU_ER, LGUI_T(RU_O), LALT_T(RU_EL), LCTL_T(RU_DE), LSFT_T(RU_ZHE),LT(_SPE,RU_E),
-    _______,         RU_YA,          RU_CHE,         RU_ES,        RU_EM,    RU_I,    _______,   _______,   RU_TE,      RU_SOFT,         RU_BE,         RU_YU,         RU_DOT,      RU_HARD,
-                   _______,         _______,       _______,      _______, _______,                        _______,      _______,       _______,       _______,        _______
+ _______,   _______,     _______,   _______,  _______, _______,                   _______,  _______,   _______,   _______,    _______,      _______,
+   RU_YO,   RU_SHTI,      RU_TSE,      RU_U,    RU_KA,   RU_IE,                     RU_EN,   RU_GHE,    RU_SHA,   RU_SHCH,      RU_ZE,        RU_HA,
+MO(_SPE), HS(RU_EF), HC(RU_YERU), HA(RU_VE), HG(RU_A),   RU_PE,                     RU_ER, HG(RU_O), HA(RU_EL), HC(RU_DE), HS(RU_ZHE),LT(_SPE,RU_E),
+ _______,     RU_YA,      RU_CHE,     RU_ES,    RU_EM,    RU_I, _______, _______,   RU_TE,  RU_SOFT,     RU_BE,     RU_YU,     RU_DOT,      RU_HARD,
+            _______,     _______,   _______,  _______, _______,                   _______,  _______,   _______,   _______,    _______
 ),
 [_GAR] = LAYOUT_split_4x6_5(
-    _______,   _______,   _______,    _______,    _______,    _______,                        _______,     _______,     _______,    _______,    _______,    _______,
-       KC_T,    KC_TAB,      KC_Q,       KC_W,       KC_E,       KC_R,                           KC_Y,        KC_U,        KC_I,       KC_O,       KC_P,    KC_BSPC,
-       KC_G,   KC_LSFT,      KC_A,       KC_S,       KC_D,       KC_F,                           KC_H,        KC_J,        KC_K,       KC_L,    DE_ODIA,     KC_ENT,
-       KC_B,   KC_LCTL,      KC_Z,       KC_X,       KC_C,       KC_V,    _______,   _______,    KC_N,        KC_M,     KC_COMM,     KC_DOT,   KC_SLASH,    KC_RSFT,
-                 _______, KC_LALT,     KC_ENT, LT(_FUN,KC_G),  KC_SPC,                        _______,     _______,     _______,    _______,    _______
+_______,  KC_ESC,    KC_1,   KC_2,         KC_3,    KC_4,                   _______,     _______,     _______,    _______,    _______,    _______,
+   KC_T,  KC_TAB,    KC_Q,   KC_W,         KC_E,    KC_R,                      KC_Y,        KC_U,        KC_I,       KC_O,       KC_P,    KC_BSPC,
+   KC_G, KC_LSFT,    KC_A,   KC_S,         KC_D,    KC_F,                      KC_H,        KC_J,        KC_K,       KC_L,    DE_ODIA,     KC_ENT,
+   KC_B, KC_LCTL,    KC_Z,   KC_X,         KC_C,    KC_V, _______, _______,    KC_N,        KC_M,     KC_COMM,     KC_DOT,   KC_SLASH,    KC_RSFT,
+         _______, KC_LALT, KC_ENT,LT(_FUN,KC_G),  KC_SPC,                   _______,     _______,     _______,    _______,    _______
 ),
 [_GAL] = LAYOUT_split_4x6_5(
-    _______,   _______,   _______,    _______,    _______,    _______,                        _______,     _______,     _______,    _______,    _______,    _______,
-    KC_BSPC,      KC_P,      KC_O,       KC_I,       KC_U,       KC_Y,                           KC_R,        KC_E,        KC_W,       KC_Q,      KC_TAB,      KC_T,
-     KC_ENT,   DE_ODIA,      KC_L,       KC_K,       KC_J,       KC_H,                           KC_F,        KC_A,        KC_S,       KC_D,     KC_LSFT,      KC_G,
-    KC_RSFT,  KC_SLASH,    KC_DOT,    KC_COMM,       KC_M,       KC_N,    _______,   _______,    KC_V,        KC_C,        KC_X,       KC_Z,    KC_SLASH,   KC_RSFT,
-               _______,   _______,    _______,    _______,    _______,                         KC_SPC,  LT(_FUN,KC_G),  _______,    KC_LALT,    _______
+_______,  _______, _______, _______, _______, _______,                     KC_4,         KC_3,    KC_2,    KC_1, KC_ESCAPE, _______,
+KC_BSPC,     KC_P,    KC_O,    KC_I,    KC_U,    KC_Y,                     KC_R,         KC_E,    KC_W,    KC_Q,    KC_TAB,    KC_T,
+ KC_ENT,  DE_ODIA,    KC_L,    KC_K,    KC_J,    KC_H,                     KC_F,         KC_A,    KC_S,    KC_D,   KC_LSFT,    KC_G,
+KC_RSFT, KC_SLASH,  KC_DOT, KC_COMM,    KC_M,    KC_N, _______, _______,   KC_V,         KC_C,    KC_X,    KC_Z,  KC_SLASH, KC_RSFT,
+          _______, _______, _______, _______, _______,                   KC_SPC,LT(_FUN,KC_G), _______, KC_LALT,   _______
 ),
 [_SPE] = LAYOUT_split_4x6_5(
     _______,   _______,   _______,    _______,    _______,    _______,                       _______,     _______,     _______,    _______,    _______,    _______,
@@ -103,19 +114,49 @@ LT(_SWT,KC_ESC),      _______,      _______,     _______,      _______,  _______
 [_SWT] = LAYOUT_split_4x6_5(
     _______,   _______,   _______,    _______,    _______,    _______,                         _______,     _______,     _______,    _______,    _______,    _______,
     _______,   _______,   _______,    _______,    _______,    _______,                         _______,     _______,     _______,    _______,    _______,    _______,
-    _______,   _______,   _______,    _______,    _______,    _______,                         _______,     _______,     _______,    _______,    _______,    _______,
+    _______,   _______,   _______,    _______,   DF(_NAV),    _______,                         _______,    DF(_NAV),     _______,    _______,    _______,    _______,
     _______,   _______,   _______,    _______,    _______,    _______,    _______,   _______,  _______,     _______,     _______,    _______,    _______,    _______,
               DF(_GAL),  DF(_GAR),   DF(_RUS),   DF(_QWE),   DF(_NOT),                        DF(_NOT),    DF(_QWE),    DF(_RUS),   DF(_GAR),    DF(_GAL)
 )
 };
 
-bool get_retro_tapping(uint16_t keycode, keyrecord_t *record) {
-    if (
-        record->event.key.col == 1
-    ) {
-        return true;
+void housekeeping_task_user(void) {
+    achordion_task();
+}
+
+uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
+  switch (tap_hold_keycode) {
+    case SW_ESC:
+    case SW_GRV:
+      return 0;  // Bypass Achordion for these keys.
+  }
+
+  return 800;  // Otherwise use a timeout of 800 ms.
+}
+
+bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record, uint16_t other_keycode, keyrecord_t* other_record) {
+    bool opposite = achordion_opposite_hands(tap_hold_record, other_record); // true if oppoite hands
+    bool thumbs_exception = other_record->event.key.row == 4 || other_record->event.key.row == 9; // true if thumb keys
+    uint8_t other_base = other_keycode & 0xFF;
+    bool copy_paste_exception = (
+        other_base == KC_C
+     || other_base == KC_V
+     || other_base == DE_Z
+     || other_base == DE_Y
+     || other_base == KC_X
+     || other_base == KC_A
+     || other_base == KC_K
+     );
+    return opposite || thumbs_exception || copy_paste_exception;
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t* record) {
+    if (!process_achordion(keycode, record)) {
+        return false;
     }
-    return false;
+    // Your macros ...
+
+    return true;
 }
 
 void set_color_hsv(int l) {
@@ -129,8 +170,11 @@ void set_color_hsv(int l) {
 
 bool rgb_matrix_indicators_user() {
     int layer = get_highest_layer(default_layer_state);
+    if (get_highest_layer(layer_state) == _SWT) {
+        return false;
+    }
 
-    if (layer < 5 && get_highest_layer(layer_state) != _SWT) {
+    if (layer <= _GAL) {
         set_color_hsv(layer);
     }
     return false;
